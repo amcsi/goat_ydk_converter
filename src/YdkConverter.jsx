@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "./components/ui/card";
+import { Button } from "./components/ui/button";
 
 /**
  * YGOPro YDK Converter — Modern ⇄ GOAT (pre‑errata)
