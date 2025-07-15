@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { Card, CardContent } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 
@@ -222,23 +222,25 @@ const rawMapping = `
 `;
 
 // Build look‑up objects once at module load.
-const modernToGoat = {};
-const goatToModern = {};
+const modernToGoat: Record<string, string> = {};
+const goatToModern: Record<string, string> = {};
 rawMapping.trim().split(/\n/).forEach((line) => {
   const match = line.match(/^(\d+)\s*->\s*(\d+)/);
   if (match) {
-    const [_, modern, goat] = match;
+    const [, modern, goat] = match;
     modernToGoat[modern] = goat;
     if (!goatToModern[goat]) goatToModern[goat] = modern;
   }
 });
 
-export default function YdkConverter() {
-  const [inputText, setInputText] = useState("");
-  const [outputText, setOutputText] = useState("");
-  const [direction, setDirection] = useState("modernToGoat"); // or "goatToModern"
+export default function YdkConverter(): JSX.Element {
+  const [inputText, setInputText] = useState<string>("");
+  const [outputText, setOutputText] = useState<string>("");
+  const [direction, setDirection] = useState<"modernToGoat" | "goatToModern">(
+    "modernToGoat"
+  );
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) file.text().then(setInputText);
   };
@@ -249,29 +251,26 @@ export default function YdkConverter() {
     const converted = lines.map((line) => {
       const id = line.trim();
       if (/^\d+$/.test(id)) {
-        return direction === "modernToGoat" ? modernToGoat[id] || id : goatToModern[id] || id;
+        return direction === "modernToGoat"
+          ? modernToGoat[id] || id
+          : goatToModern[id] || id;
       }
       return line;
     });
     setOutputText(converted.join("\n"));
   };
 
-  /**
-   * FIX ➜ Ensures programmatic click works in all browsers and the URL is revoked *after* the
-   * download has begun, avoiding premature revocation in Firefox.
-   */
   const download = () => {
     if (!outputText.trim()) return;
     const blob = new Blob([outputText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.style.display = "none";
     a.href = url;
-    a.download = direction === "modernToGoat" ? "deck_goat.ydk" : "deck_modern.ydk";
+    a.download =
+      direction === "modernToGoat" ? "deck_goat.ydk" : "deck_modern.ydk";
     document.body.appendChild(a);
     a.click();
     a.remove();
-    // Re‑revoke on next tick to give the browser time to start the download
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
@@ -304,14 +303,16 @@ export default function YdkConverter() {
           <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-4 md:space-y-0">
             <select
               value={direction}
-              onChange={(e) => setDirection(e.target.value)}
+              onChange={(e) =>
+                setDirection(e.target.value as "modernToGoat" | "goatToModern")
+              }
               className="p-2 border rounded w-full md:w-auto"
             >
               <option value="modernToGoat">Modern ➜ GOAT (pre‑errata)</option>
               <option value="goatToModern">GOAT ➜ Modern</option>
             </select>
 
-            <Button variant="default" onClick={convert} className="w-full md:w-auto">
+            <Button onClick={convert} className="w-full md:w-auto">
               Convert
             </Button>
           </div>
@@ -326,7 +327,7 @@ export default function YdkConverter() {
                   className="w-full h-48 p-2 border rounded bg-gray-50"
                 />
               </div>
-              <Button variant="secondary" onClick={download} className="w-full md:w-auto">
+              <Button onClick={download} className="w-full md:w-auto">
                 Download .ydk
               </Button>
             </>
