@@ -307,8 +307,8 @@ export default function YdkConverter() {
               onChange={(e) => setDirection(e.target.value)}
               className="p-2 border rounded w-full md:w-auto"
             >
-              <option value="modernToGoat">Modern ➜ GOAT (pre‑errata)</option>
-              <option value="goatToModern">GOAT ➜ Modern</option>
+              <option value="modernToGoat">Duelingbook ➜ EdoPro (GOAT)</option>
+              <option value="goatToModern">EdoPro (GOAT) ➜ Duelingbook</option>
             </select>
 
             <Button variant="default" onClick={convert} className="w-full md:w-auto">
