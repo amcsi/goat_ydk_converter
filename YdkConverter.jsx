@@ -229,7 +229,6 @@ rawMapping.trim().split(/\n/).forEach((line) => {
   if (match) {
     const [_, modern, goat] = match;
     modernToGoat[modern] = goat;
-    // Prefer the first appearance for duplicates to keep determinate behaviour
     if (!goatToModern[goat]) goatToModern[goat] = modern;
   }
 });
@@ -241,35 +240,39 @@ export default function YdkConverter() {
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      file.text().then(setInputText);
-    }
+    if (file) file.text().then(setInputText);
   };
 
   const convert = () => {
-    if (!inputText) return;
+    if (!inputText.trim()) return;
     const lines = inputText.split(/\r?\n/);
     const converted = lines.map((line) => {
       const id = line.trim();
       if (/^\d+$/.test(id)) {
-        return direction === "modernToGoat"
-          ? modernToGoat[id] || id
-          : goatToModern[id] || id;
+        return direction === "modernToGoat" ? modernToGoat[id] || id : goatToModern[id] || id;
       }
-      return line; // keep comments / section headers intact
+      return line;
     });
     setOutputText(converted.join("\n"));
   };
 
+  /**
+   * FIX ➜ Ensures programmatic click works in all browsers and the URL is revoked *after* the
+   * download has begun, avoiding premature revocation in Firefox.
+   */
   const download = () => {
-    if (!outputText) return;
+    if (!outputText.trim()) return;
     const blob = new Blob([outputText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = direction === "modernToGoat" ? "deck_goat.ydk" : "deck_modern.ydk";
-    link.click();
-    URL.revokeObjectURL(url);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = direction === "modernToGoat" ? "deck_goat.ydk" : "deck_modern.ydk";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Re‑revoke on next tick to give the browser time to start the download
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (
