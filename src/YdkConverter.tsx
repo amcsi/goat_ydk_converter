@@ -236,13 +236,17 @@ rawMapping.trim().split(/\n/).forEach((line) => {
 export default function YdkConverter(): JSX.Element {
   const [inputText, setInputText] = useState<string>("");
   const [outputText, setOutputText] = useState<string>("");
+  const [inputFilename, setInputFilename] = useState<string>("");
   const [direction, setDirection] = useState<"modernToGoat" | "goatToModern">(
     "modernToGoat"
   );
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) file.text().then(setInputText);
+    if (file) {
+      file.text().then(setInputText);
+      setInputFilename(file.name);
+    }
   };
 
   const convert = () => {
@@ -266,8 +270,8 @@ export default function YdkConverter(): JSX.Element {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download =
-      direction === "modernToGoat" ? "deck_goat.ydk" : "deck_modern.ydk";
+    const prefix = inputFilename ? `${inputFilename.replace(/\.ydk$/, "")}_` : "";
+    a.download = prefix + (direction === "modernToGoat" ? `edopro_goat.ydk` : "duelingbook.ydk")
     document.body.appendChild(a);
     a.click();
     a.remove();
