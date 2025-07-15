@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.0.14",
+    "@types/react": "^19.1.8",
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.31",
