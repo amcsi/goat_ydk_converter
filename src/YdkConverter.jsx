@@ -332,6 +332,14 @@ export default function YdkConverter() {
             </>
           )}
         </CardContent>
+
+        <CardContent>
+          <p className="text-center text-gray-500">
+            <a href="https://github.com/amcsi/goat_ydk_converter" target="_blank" rel="noreferrer">
+              Source code on GitHub
+            </a>
+          </p>
+        </CardContent>
       </Card>
     </div>
   );
