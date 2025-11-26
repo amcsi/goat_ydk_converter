@@ -219,6 +219,10 @@ const rawMapping = `
 99414168  -> 504700181
 99597615  -> 504700176
 99724761  -> 504700177
+28358902  -> 504700187 // Crimson Sentry
+34124316  -> 504700188 // Cyber Jar
+69279219  -> 504700189 // My Body As a Shield
+94773007  -> 504700190 // Jirai Gumo
 `;
 
 // Build look‑up objects once at module load.
